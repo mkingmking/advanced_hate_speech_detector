@@ -1,6 +1,6 @@
 import pandas as pd
 import pandera.pandas as pa
-from pandera import Column, DataFrameSchema, Check
+from pandera.pandas import Column, DataFrameSchema, Check
 
 # -------------------------------
 # 1. Simple Ingestion + Manual Validation
