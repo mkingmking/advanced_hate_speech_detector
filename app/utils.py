@@ -11,7 +11,7 @@ URL_RE     = re.compile(r"https?://\S+|www\.\S+")
 MENTION_RE = re.compile(r"@\w+")
 HASHTAG_RE = re.compile(r"#(\w+)")
 # punctuation regex: keep word chars and spaces
-PUNCT_RE   = re.compile(r"[^\w\s]")
+PUNCT_RE = re.compile(r"[^\w\s@]") 
 
 STOPWORDS = set(ENGLISH_STOP_WORDS)
 
@@ -52,11 +52,11 @@ def normalize_tweet(text: str) -> str:
     # 2) lowercase
     text = text.lower() # 
     # 3) expand contractions
-    text = contractions.fix(text)
+    text = contractions.fix(text) #
     # 4) demojize
-    text = emoji.demojize(text, delimiters=(" ", " "))
+    text = emoji.demojize(text, delimiters=(" ", " ")) #
     # 5) strip the colons around emoji names
-    text = re.sub(r":([a-z0-9_]+):", r"\1", text)
+    text = re.sub(r":([a-z0-9_]+):", r"\1", text) #
     # 6) remove URLs
     text = URL_RE.sub("", text) # 
     # 7) normalize mentions
