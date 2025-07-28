@@ -1,2 +1,9 @@
 pandas
 pandera
+ftfy
+emoji
+contractions
+nltk
+scikit-learn
+matplotlib
+wordcloud

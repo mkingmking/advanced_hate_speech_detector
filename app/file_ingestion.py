@@ -1,8 +1,7 @@
 import pandas as pd
-import pandera.pandas as pa
 import os
 from pathlib import Path
-from pandera.pandas import Column, DataFrameSchema, Check
+from pandera import Column, DataFrameSchema, Check
 from utils import normalize_tweet
 
 
@@ -13,6 +12,37 @@ os.environ["DISABLE_PANDERA_IMPORT_WARNING"] = "True"
 PROCESSED_DIR = Path(__file__).resolve().parents[1] / "data" / "processed"
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
+
+def _check_required_columns(df: pd.DataFrame, required_cols: set) -> None:
+    missing_cols = required_cols - set(df.columns)
+    if missing_cols:
+        raise ValueError(f"Missing required columns: {missing_cols}")
+
+
+def _enforce_types(df: pd.DataFrame) -> None:
+    if not pd.api.types.is_integer_dtype(df["label"]):
+        df["label"] = df["label"].astype(int)
+    if not pd.api.types.is_string_dtype(df["tweet"]):
+        df["tweet"] = df["tweet"].astype(str)
+
+
+def _validate_values(df: pd.DataFrame) -> None:
+    invalid_labels = set(df["label"].unique()) - {0, 1}
+    if invalid_labels:
+        raise ValueError(f"Found invalid label values: {invalid_labels}")
+    if df["tweet"].isnull().any() or (df["tweet"].str.len() == 0).any():
+        raise ValueError("Some tweets are empty or null.")
+
+
+def _normalize_column(df: pd.DataFrame, column: str = "tweet") -> None:
+    df[column] = df[column].apply(normalize_tweet)
+
+
+def _save(df: pd.DataFrame, src_path: str, suffix: str) -> None:
+    out_name = Path(src_path).stem + suffix
+    df.to_csv(PROCESSED_DIR / out_name, index=False)
+    print(f"→ Saved processed data to {PROCESSED_DIR/out_name}")
+
 # -------------------------------
 # 1. Simple Ingestion + Manual Validation
 # -------------------------------
@@ -21,46 +51,17 @@ def ingest_and_validate_manual(file_path: str) -> pd.DataFrame:
     Reads a CSV, checks for required columns and correct types/values.
     """
     df = pd.read_csv(file_path)
-    
-    # 1a. Check required columns exist
-    required_cols = {"label", "tweet"}
-    missing_cols = required_cols - set(df.columns)
-    if missing_cols:
-        raise ValueError(f"Missing required columns: {missing_cols}")
-    
-    # 1b. Enforce types
-    # Ensure 'label' is integer
-    if not pd.api.types.is_integer_dtype(df["label"]):
-        try:
-            df["label"] = df["label"].astype(int)
-        except Exception as e:
-            raise TypeError(f"Cannot convert 'label' to int: {e}")
-    # Ensure 'tweet' is string
-    if not pd.api.types.is_string_dtype(df["tweet"]):
-        df["tweet"] = df["tweet"].astype(str)
-    
-    # 1c. Validate values
-    invalid_labels = set(df["label"].unique()) - {0, 1}
-    if invalid_labels:
-        raise ValueError(f"Found invalid label values: {invalid_labels}")
-    if df["tweet"].isnull().any() or (df["tweet"].str.len() == 0).any():
-        raise ValueError("Some tweets are empty or null.")
-    
-    df["cleaned_tweet"] = df["tweet"].apply(normalize_tweet)
-
-    # save out
-    out_name = Path(file_path).stem + "_manual_processed.csv"
-    df.to_csv(PROCESSED_DIR / out_name, index=False)
-    print(f"→ Saved manually processed data to {PROCESSED_DIR/out_name}")
-
-    
+    _check_required_columns(df, {"label", "tweet"})
+    _enforce_types(df)
+    _validate_values(df)
+    _normalize_column(df, "tweet")
+    out_name = "_manual_processed.csv"
+    _save(df, file_path, out_name)
     return df
 
 # -------------------------------
 # 2. Schema Enforcement with Pandera
 # -------------------------------
-from pandera import Column, DataFrameSchema, Check
-
 tweet_schema = DataFrameSchema({
     "label": Column(
         int,
@@ -82,16 +83,10 @@ def ingest_and_validate_pandera(file_path: str) -> pd.DataFrame:
     Will raise a SchemaErrors exception listing all violations.
     """
     df = pd.read_csv(file_path)
-    # Validate (lazy=True to collect all errors before raising)
     validated_df = tweet_schema.validate(df, lazy=True)
-
-    validated_df["tweet"] = validated_df["tweet"].apply(normalize_tweet)
-
-    # save out
-    out_name = Path(file_path).stem + "_pandera_processed.csv"
-    validated_df.to_csv(PROCESSED_DIR / out_name, index=False)
-    print(f"→ Saved Pandera-validated data to {PROCESSED_DIR/out_name}")
-
+    _normalize_column(validated_df, "tweet")
+    out_name = "_pandera_processed.csv"
+    _save(validated_df, file_path, out_name)
     return validated_df
 
 
@@ -103,14 +98,9 @@ test_schema = DataFrameSchema({
 def ingest_test(file_path: str) -> pd.DataFrame:
     df = pd.read_csv(file_path)
     df = test_schema.validate(df, lazy=True)
-    df["tweet"] = df["tweet"].apply(normalize_tweet)
-
-
-
-    # save out
-    out_name = Path(file_path).stem + "_pandera_processed.csv"
-    df.to_csv(PROCESSED_DIR / out_name, index=False)
-    print(f"→ Saved Pandera-validated data to {PROCESSED_DIR/out_name}")
+    _normalize_column(df, "tweet")
+    out_name = "_pandera_processed.csv"
+    _save(df, file_path, out_name)
     return df
 
 # -------------------------------

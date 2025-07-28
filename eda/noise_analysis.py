@@ -1,4 +1,4 @@
-# eda/noise_patterns.py
+# eda/noise_analysis.py
 
 import sys
 from pathlib import Path
