@@ -1,6 +1,7 @@
 import pandas as pd
 import pandera.pandas as pa
 from pandera.pandas import Column, DataFrameSchema, Check
+from utils import normalize_tweet
 
 # -------------------------------
 # 1. Simple Ingestion + Manual Validation
@@ -35,6 +36,8 @@ def ingest_and_validate_manual(file_path: str) -> pd.DataFrame:
     if df["tweet"].isnull().any() or (df["tweet"].str.len() == 0).any():
         raise ValueError("Some tweets are empty or null.")
     
+    df["cleaned_tweet"] = df["tweet"].apply(normalize_tweet)
+    
     return df
 
 # -------------------------------
@@ -65,13 +68,15 @@ def ingest_and_validate_pandera(file_path: str) -> pd.DataFrame:
     df = pd.read_csv(file_path)
     # Validate (lazy=True to collect all errors before raising)
     validated_df = tweet_schema.validate(df, lazy=True)
+
+    validated_df["cleaned_tweet"] = validated_df["tweet"].apply(normalize_tweet)
     return validated_df
 
 # -------------------------------
 # Example Usage
 # -------------------------------
 if __name__ == "__main__":
-    path = "../data/raw/train_raw.csv"
+    path = "data/raw/train_raw.csv"
     
     # Manual validation
     df_manual = ingest_and_validate_manual(path)
@@ -80,4 +85,10 @@ if __name__ == "__main__":
     # Pandera validation
     df_pandera = ingest_and_validate_pandera(path)
     print(f"Pandera validation passed: {len(df_pandera)} records")
+
+    samples = df_pandera["tweet"].head(20).tolist()
+    cleaned  = df_pandera["cleaned_tweet"].head(20).tolist()
+    list(zip(samples, cleaned))
+    print(samples)
+    print(cleaned)
 
