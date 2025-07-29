@@ -15,7 +15,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from app.file_ingestion import ingest_and_validate_pandera
 
 # 1. Load & validate
-df = ingest_and_validate_pandera("../data/raw/train_raw.csv")
+df = ingest_and_validate_pandera("../data/processed/train_raw_pandera_processed.csv")
 
 # 2. Prepare text per class
 texts = {

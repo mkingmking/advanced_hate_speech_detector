@@ -3,6 +3,7 @@
 from transformers import AutoTokenizer
 import pandas as pd
 from pathlib import Path
+import torch
 
 # 1) BERTweet tokenizer (optimized for tweets)
 def get_bertweet_tokenizer():
@@ -65,11 +66,21 @@ def tokenize_processed_csv(file_path: str, tokenizer_type: str = "bertweet", max
 
 
     
-# Example usage when run as script:
+
 if __name__ == "__main__":
     processed_file = Path("data/processed/train_raw_pandera_processed.csv")
     enc = tokenize_processed_csv(str(processed_file), tokenizer_type="bertweet", max_length=128)
     print("Tokenization complete:")
     print(" - input_ids shape:", enc["input_ids"].shape)
     print(" - attention_mask shape:", enc["attention_mask"].shape)
-    print(enc)
+    
+
+
+# Save just the tensors, not the full BatchEncoding
+    to_save = {
+        "input_ids": enc["input_ids"],
+        "attention_mask": enc["attention_mask"]
+    }
+    output_path = processed_file.parent / "train_tokenized.pt"
+    torch.save(to_save, output_path)
+    print(f"→ Saved tokenized encodings to {output_path}")
