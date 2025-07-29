@@ -1,8 +1,8 @@
 {
-    "AWSEBDockerrunVersion": 2,
+    "AWSEBDockerrunVersion": 1,
     "Image": {
       "Name": "094092120727.dkr.ecr.eu-west-1.amazonaws.com/hate-speech-api:latest",
-      "Update": "true"
+      "Update": true
     },
     "Ports": [
       { "ContainerPort": "8080" }
