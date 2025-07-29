@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # Load once at startup
 DF = pd.read_csv("data/processed/train_raw_pandera_processed.csv")
-DF["length"] = DF["cleaned_tweet"].str.len()
+DF["length"] = DF["tweet"].str.len()
 
 @app.route("/dashboard")
 def dashboard():
@@ -34,7 +34,7 @@ def dashboard():
         min_len, max_len = 0, int(DF["length"].max())
 
     subset = DF[(DF["length"]>=min_len)&(DF["length"]<=max_len)]
-    samples = subset[["label","cleaned_tweet"]].sample(5).to_dict("records")
+    samples = subset[["label","tweet"]].sample(5).to_dict("records")
 
     return render_template(
         "dashboard.html",

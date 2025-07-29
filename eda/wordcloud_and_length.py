@@ -15,7 +15,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from app.file_ingestion import ingest_and_validate_pandera
 
 # 1. Load & validate
-df = ingest_and_validate_pandera("../data/processed/train_raw_pandera_processed.csv")
+df = ingest_and_validate_pandera("data/raw/train_raw.csv")
 
 # 2. Prepare text per class
 texts = {
@@ -27,13 +27,17 @@ texts = {
 output_dir = PROJECT_ROOT / "eda"
 output_dir.mkdir(exist_ok=True)
 
+# Add "user" to the stopword set
+custom_stopwords = STOPWORDS.union({"user"})
+
 for label, text in texts.items():
     wc = WordCloud(
         width=800, height=400,
-        stopwords=STOPWORDS,
+        stopwords=custom_stopwords,
         background_color="white",
         max_words=100
     ).generate(text)
+    
     plt.figure(figsize=(10,5))
     plt.imshow(wc, interpolation="bilinear")
     plt.axis("off")
