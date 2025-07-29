@@ -3,6 +3,7 @@
 import torch
 from torch.utils.data import DataLoader, TensorDataset, RandomSampler, SequentialSampler
 from transformers import AutoModelForSequenceClassification, get_linear_schedule_with_warmup
+from transformers import AutoTokenizer
 from torch.optim import AdamW
 import pandas as pd
 from pathlib import Path
@@ -121,6 +122,9 @@ def train(
     out_dir.mkdir(parents=True, exist_ok=True)
     print(f"\nSaving model to {out_dir}…")
     model.save_pretrained(out_dir)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer.save_pretrained(output_dir)
+    print(f"→ Saved tokenizer to {output_dir}")
     tokenizer = model.config._name_or_path
     print("Done.")
 
