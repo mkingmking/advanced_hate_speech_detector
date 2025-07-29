@@ -21,8 +21,8 @@ RUN pip install --no-cache-dir -r requirements.txt --extra-index-url https://dow
 # Stage 2: Runner - the lean, final image for production deployment
 FROM python:3.11-slim
 
-# CRITICAL FIX: Add /usr/local/bin to the PATH in the final stage
-# This ensures that executables installed by pip (like gunicorn) are found.
+# The previous ENV PATH line might not be strictly necessary with `python -m`,
+# but it doesn't hurt and is good practice for other executables.
 ENV PATH="/usr/local/bin:$PATH"
 
 WORKDIR /app
@@ -40,4 +40,5 @@ EXPOSE 8080
 ENV FLASK_APP=app/main.py \
     FLASK_ENV=production
 
-CMD ["sh", "-c", "exec gunicorn --bind 0.0.0.0:${PORT:-8080} app.main:app"]
+# --- CRITICAL FIX: Run gunicorn as a Python module ---
+CMD ["sh", "-c", "exec python -m gunicorn --bind 0.0.0.0:${PORT:-8080} app.main:app"]
