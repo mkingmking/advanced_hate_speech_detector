@@ -14,4 +14,10 @@
 <body>
   {% block content %}{% endblock %}
 </body>
+
+<nav>
+  <a href="{{ url_for('dashboard') }}">EDA</a> |
+  <a href="{{ url_for('predict_ui') }}">Predict</a>
+</nav>
+
 </html>

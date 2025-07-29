@@ -1,3 +1,6 @@
+# requirements.txt
+
+flask
 pandas
 pandera
 ftfy
@@ -7,4 +10,8 @@ nltk
 scikit-learn
 matplotlib
 wordcloud
-flask
+torch
+transformers
+plotly
+pillow
+gunicorn

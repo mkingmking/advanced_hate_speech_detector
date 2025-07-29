@@ -1,24 +1,36 @@
-# Use a slim Python base
+# Dockerfile
+
+# 1) Use slim Python base
 FROM python:3.11-slim
 
-# 1. Set workdir
+# 2) Install system build tools (gcc, headers) & cleanup
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      build-essential \
+      python3-dev \
+      libfreetype6-dev \
+      libpng-dev \
+      pkg-config && \
+    rm -rf /var/lib/apt/lists/*
+
+# 3) Create and set workdir
 WORKDIR /app
 
-# 2. Copy only requirements first (for caching)
-COPY requirements.txt /app/
+# 4) Copy & install Python deps
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt && \
+    python -m nltk.downloader stopwords
 
-# 3. Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# 5) Copy app code
+COPY . .
 
-# 4. Copy the rest of your app
-COPY . /app
+# 6) Expose your Flask/Gunicorn port
+EXPOSE 8080
 
-# 5. Expose Flask’s port
-EXPOSE 5000
+# 7) Env vars
+ENV FLASK_APP=app/main.py \
+    FLASK_ENV=production
 
-# 6. Set environment variable for Flask
-ENV FLASK_APP=app/main.py
-ENV FLASK_ENV=production
-
-# 7. Run the app
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+# 8) Use Gunicorn as WSGI server
+#CMD ["gunicorn", "--bind", "0.0.0.0:8080", "app.main:app"]
+CMD ["sh", "-c", "exec gunicorn --bind 0.0.0.0:${PORT:-8080} app.main:app"]
