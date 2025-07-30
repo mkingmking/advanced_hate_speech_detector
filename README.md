@@ -27,25 +27,26 @@ This repository contains a project for training and serving a hate speech classi
 Use `app/file_ingestion.py` to validate and clean raw CSV files:
 
 ```bash
-python app/file_ingestion.py
+python3 -m app.file_ingestion 
 ```
 
 ### Tokenisation
 
 ```bash
-python app/tokenization.py
+python3 -m app.tokenization
 ```
 
 ### Training
 
 ```bash
-python app/train.py
+python3 -m app.train
 ```
 
 ### Running the API
 
 ```bash
-python app/main.py
+
+python3 -m app.main 
 ```
 
 The Flask application exposes a small dashboard at `/dashboard` and a JSON prediction endpoint at `/predict`.
