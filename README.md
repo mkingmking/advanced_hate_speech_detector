@@ -44,7 +44,7 @@ python3 -m app.tokenization
 python3 -m app.train
 ```
 
-###Running the API & Dashboard
+### Running the API & Dashboard
 
 Start the Flask app:
 
