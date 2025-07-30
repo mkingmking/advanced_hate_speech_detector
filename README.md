@@ -11,6 +11,8 @@ This repository contains a project for training and serving a hate speech classi
 - Basic evaluation and prediction utilities
 - Flask app with a dashboard and prediction endpoint
 
+
+
 ## Setup
 
 1. Create a Python environment (Python 3.10+ recommended).
@@ -42,14 +44,27 @@ python3 -m app.tokenization
 python3 -m app.train
 ```
 
-### Running the API
+###Running the API & Dashboard
+
+Start the Flask app:
 
 ```bash
-
-python3 -m app.main 
+python3 -m app.main
 ```
 
-The Flask application exposes a small dashboard at `/dashboard` and a JSON prediction endpoint at `/predict`.
+
+
+-Dashboard: View real-time EDA visualisations at http://localhost:5000/dashboard:
+
+-Prediction UI: Classify custom tweets at http://localhost:5000/predict-ui:
+
+-Prediction Endpoint: Send JSON to /predict:
+```bash
+curl -X POST http://localhost:5000/predict \
+     -H "Content-Type: application/json" \
+     -d '{"text":"insert your twit here"}'
+```
+
 
 ## Contributing
 
