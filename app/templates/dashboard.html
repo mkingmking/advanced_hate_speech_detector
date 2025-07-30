@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Pre-Model EDA Dashboard{% endblock %}
+
+{% block content %}
+<h1>🗂️ Pre-Model EDA Dashboard</h1>
+
+<!-- Side-by-side charts for Label Distribution and Tweet Length -->
+<div class="row" style="display:flex; gap:40px; justify-content:center; margin-bottom:40px;">
+  <div class="chart" style="flex:1; max-width:600px;">
+    <h2>Label Distribution</h2>
+    {{ label_dist | safe }}
+  </div>
+  <div class="chart" style="flex:1; max-width:600px;">
+    <h2>Tweet Length Histogram</h2>
+    {{ length_hist | safe }}
+  </div>
+</div>
+
+<div class="chart row">
+  <div class="col">
+    <h3>Non-hate Word Cloud</h3>
+    <img src="{{ url_for('static', filename='wordcloud_label_0.png') }}" alt="WordCloud 0"
+    style="max-width:670px; height:auto;" />
+  </div>
+  <div class="col">
+    <h3>Hate Word Cloud</h3>
+    <img src="{{ url_for('static', filename='wordcloud_label_1.png') }}" alt="WordCloud 1"
+    style="max-width:670px; height:auto;" />
+  </div>
+</div>
+
+<div class="chart">
+  <h2>Sample Tweets (by length)</h2>
+  <form method="get">
+    <label>Min Length:
+      <input type="number" name="min_len" value="{{ min_len }}" min="0">
+    </label>
+    <label>Max Length:
+      <input type="number" name="max_len" value="{{ max_len }}" min="0">
+    </label>
+    <button type="submit">Filter</button>
+  </form>
+  <ul>
+    {% for row in samples %}
+      <li>[{{ row.label }}] {{ row.tweet }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

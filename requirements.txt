@@ -1,3 +1,6 @@
+# requirements.txt
+
+flask
 pandas
 pandera
 ftfy
@@ -7,3 +10,22 @@ nltk
 scikit-learn
 matplotlib
 wordcloud
+plotly
+pillow
+gunicorn
+
+# --- Optimization for CPU-only environments ---
+# Install PyTorch CPU-only. This is CRUCIAL for reducing image size and build time.
+# We explicitly specify the index URL for CPU-only wheels.
+# You might need to specify a exact version like torch==2.x.y+cpu
+# Check the PyTorch website for the latest stable CPU-only installation command:
+# https://pytorch.org/get-started/locally/
+# As of current information, it often looks like:
+# torch @ https://download.pytorch.org/whl/cpu/torch-2.4.0%2Bcpu-cp311-cp311-linux_x86_64.whl # Example (adjust version as needed)
+# Or, the preferred method is to add the --extra-index-url in your Dockerfile pip install command
+# rather than hardcoding the URL here, as it makes version management easier.
+# So, we'll keep 'torch' here, but modify the Dockerfile's pip command.
+torch
+
+# Transformers will automatically detect the CPU-only PyTorch and install its CPU-only dependencies.
+transformers

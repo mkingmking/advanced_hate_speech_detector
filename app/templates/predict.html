@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Hate-Speech Predictor{% endblock %}
+
+{% block content %}
+  <h1>🔮 Hate-Speech Predictor</h1>
+
+  <form id="predict-form">
+    <label for="text-input">Enter your tweet:</label><br>
+    <textarea id="text-input" name="text" rows="4" cols="50"
+              placeholder="Type something…"></textarea><br><br>
+    <button type="submit">Classify</button>
+  </form>
+
+  <div id="result" style="margin-top:20px;"></div>
+
+  <script>
+    document.getElementById("predict-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const txt = document.getElementById("text-input").value;
+      const resDiv = document.getElementById("result");
+      resDiv.innerHTML = "Classifying…";
+
+      const resp = await fetch("{{ url_for('predict') }}", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({text: txt})
+      });
+      // Parse the JSON array directly:
+      const results = await resp.json();
+      if (results.length === 0) {
+        resDiv.innerHTML = "No prediction returned.";
+        return;
+      }
+      // Grab the first (and only) element:
+      const first = results[0];
+
+      // Use the correct field name "prediction"
+      resDiv.innerHTML = `
+        <strong>Input:</strong> ${first.text}<br>
+        <strong>Non-hate:</strong> ${first.non_hate.toFixed(3)}<br>
+        <strong>Hate:</strong> ${first.hate.toFixed(3)}<br>
+        <strong>Predicted label:</strong> ${first.prediction}
+      `;
+    });
+  </script>
+{% endblock %}

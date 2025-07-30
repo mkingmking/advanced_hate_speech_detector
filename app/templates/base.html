@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}Hate-Speech EDA{% endblock %}</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    .chart { margin-bottom: 40px; }
+    .row { display: flex; gap: 20px; }
+    .col { flex: 1; text-align: center; }
+  </style>
+</head>
+<body>
+  {% block content %}{% endblock %}
+</body>
+
+<nav>
+  <a href="{{ url_for('dashboard') }}">EDA</a> |
+  <a href="{{ url_for('predict_ui') }}">Predict</a>
+</nav>
+
+</html>

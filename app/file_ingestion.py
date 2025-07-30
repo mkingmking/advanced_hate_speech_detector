@@ -2,7 +2,7 @@ import pandas as pd
 import os
 from pathlib import Path
 from pandera import Column, DataFrameSchema, Check
-from utils import normalize_tweet
+from app.utils import normalize_tweet
 
 
 
