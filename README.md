@@ -18,7 +18,7 @@ This repository contains a project for training and serving a hate speech classi
    ```bash
    pip install -r requirements.txt
    ```
-3. Obtain or prepare the training data. Example CSV files are expected in the `data/raw` folder (not included in the repository). Processed data and models should also remain outside version control.
+
 
 ## Usage
 
