@@ -1,6 +1,6 @@
 # Advanced Hate Speech Detector
 
-This repository contains a small demonstration project for training and serving a hate speech classification model using the [BERTweet](https://github.com/VinAIResearch/BERTweet) architecture. The code includes utilities for ingesting and cleaning tweet data, tokenising text, training a transformer model and deploying a simple Flask web interface for predictions.
+This repository contains a project for training and serving a hate speech classification model using the [BERTweet](https://github.com/VinAIResearch/BERTweet) architecture. The code includes utilities for ingesting and cleaning tweet data, tokenising text, training a transformer model and deploying a simple Flask web interface for predictions.
 
 ## Features
 
@@ -9,7 +9,7 @@ This repository contains a small demonstration project for training and serving 
 - Tokenisation using BERTweet or BERT-base
 - Training script built on `transformers` and `torch`
 - Basic evaluation and prediction utilities
-- Flask app with simple dashboard and prediction endpoint
+- Flask app with a dashboard and prediction endpoint
 
 ## Setup
 
