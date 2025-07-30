@@ -40,5 +40,5 @@ EXPOSE 8080
 ENV FLASK_APP=app/main.py \
     FLASK_ENV=production
 
-# --- CRITICAL FIX: Run gunicorn as a Python module ---
+
 CMD ["sh", "-c", "exec python -m gunicorn --bind 0.0.0.0:${PORT:-8080} app.main:app"]

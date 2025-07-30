@@ -4,7 +4,7 @@ import torch
 import pandas as pd
 from flask import Flask, render_template, request, jsonify, url_for, redirect
 import plotly.express as px
-from transformer import load_model_and_tokenizer, infer_examples
+from app.transformer import load_model_and_tokenizer, infer_examples
 from app.utils import select_device
 
 # --------------------
