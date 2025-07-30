@@ -7,6 +7,9 @@ from transformers import AutoTokenizer
 from torch.optim import AdamW
 import pandas as pd
 from pathlib import Path
+from app.utils import select_device
+
+
 
 def load_data(encodings_path, processed_csv_path):
     """
@@ -56,14 +59,8 @@ def train(
     device=None
 ):
     # 1) Device
-    # Prefer MPS on macOS, then CUDA, then CPU
     if device is None:
-        if torch.backends.mps.is_available():
-            device = "mps"
-        elif torch.cuda.is_available():
-            device = "cuda"
-        else:
-            device = "cpu"
+        device = select_device()
     print("Using device:", device)
 
     
@@ -125,7 +122,6 @@ def train(
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     tokenizer.save_pretrained(output_dir)
     print(f"→ Saved tokenizer to {output_dir}")
-    tokenizer = model.config._name_or_path
     print("Done.")
 
 if __name__ == "__main__":

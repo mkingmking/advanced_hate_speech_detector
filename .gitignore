@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*~
 
 # C extensions
 *.so
@@ -24,11 +25,11 @@ var/
 *.egg
 
 # Virtual environments
+env/
 .env
 .venv
 venv/
 ENV/
-env/
 env.bak/
 venv.bak/
 
@@ -46,13 +47,15 @@ venv.bak/
 *.iml
 
 # Jupyter
-.ipynb_checkpoints
+*.ipynb
+.ipynb_checkpoints/
 
 # macOS
 .DS_Store
 
 # Logs and databases
 *.log
+logs/
 *.sqlite3
 
 # Docker
@@ -61,13 +64,11 @@ docker-compose.*.yml
 # Data (raw and large files)
 data/raw/
 data/processed/
+*.csv
 
 # Model outputs and tokenized data
 models/
 *.pt
-
-# Secret environment files
-.env
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*

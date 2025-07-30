@@ -4,8 +4,25 @@ import re
 import ftfy
 import emoji
 import contractions
+import torch
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
+
+__all__ = [
+    "normalize_repeated_chars",
+    "remove_stopwords",
+    "fix_encoding",
+    "to_lower",
+    "expand_contractions_text",
+    "handle_emojis",
+    "remove_urls",
+    "normalize_mentions",
+    "normalize_hashtags",
+    "strip_punctuation",
+    "collapse_spaces",
+    "normalize_tweet",
+    "select_device",
+]
 
 URL_RE = re.compile(r"https?://\S+|www\.\S+")
 MENTION_RE = re.compile(r"@\w+")
@@ -13,6 +30,15 @@ HASHTAG_RE = re.compile(r"#(\w+)")
 PUNCT_RE = re.compile(r"[^\w\s@]")
 
 STOPWORDS = set(ENGLISH_STOP_WORDS)
+
+
+def select_device() -> str:
+    """Return the best available torch device."""
+    if torch.backends.mps.is_available():
+        return "mps"
+    if torch.cuda.is_available():
+        return "cuda"
+    return "cpu"
 
 
 
